@@ -26,9 +26,11 @@ class Application(tk.Frame):
         self.max_op_time = tk.IntVar()
 
         self.explore_mode = tk.IntVar(value=0)
+        # 自动轮换
+        self.automatic_rotation = tk.BooleanVar(value=True)
         self.gouliang_1 = tk.BooleanVar(value=False)
-        self.gouliang_2 = tk.BooleanVar(value=True)
-        self.gouliang_3 = tk.BooleanVar(value=True)
+        self.gouliang_2 = tk.BooleanVar(value=False)
+        self.gouliang_3 = tk.BooleanVar(value=False)
         self.gouliang_4 = tk.BooleanVar(value=False)
         self.gouliang_5 = tk.BooleanVar(value=False)
         self.fight_boss_enable = tk.BooleanVar()
@@ -217,12 +219,17 @@ class Application(tk.Frame):
                        value=2, command=lambda: self.gouliang_state(1)).grid(row=1, column=0, sticky=tk.W)
         tk.Radiobutton(submode, text='桌面版双开', variable=self.explore_mode,
                        value=3, command=lambda: self.gouliang_state(3)).grid(row=1, column=1, sticky=tk.W)
+        # 使用自动轮换
+        autoRotation = tk.LabelFrame(self.frame2, text='自动轮换 (勿锁定阵容)')
+        autoRotation.pack(fill=tk.BOTH, expand=True)
+        self.automatic_rotation_pack = tk.Checkbutton(autoRotation, text='自动轮换-系统自带不使用脚本更换',
+                                                      variable=self.automatic_rotation)
+        self.automatic_rotation_pack.grid(row=0, column=0)
 
         # 狗粮设置
         food = tk.LabelFrame(self.frame2, text='更换狗粮 (勿锁定阵容)')
         food.pack(fill=tk.BOTH, expand=True)
-        self.gouliang_l = tk.Checkbutton(
-            food, text='左', variable=self.gouliang_1)
+        self.gouliang_l = tk.Checkbutton(food, text='左', variable=self.gouliang_1)
         self.gouliang_l.grid(row=0, column=0)
         self.gouliang_m = tk.Checkbutton(
             food, text='中', variable=self.gouliang_2)
@@ -230,7 +237,7 @@ class Application(tk.Frame):
         self.gouliang_r = tk.Checkbutton(
             food, text='右', variable=self.gouliang_3)
         self.gouliang_r.grid(row=0, column=2)
-        tk.Label(food, text='单人/队员').grid(row=0, column=3, sticky=tk.W)
+        tk.Label(food, text='单人/队员狗粮更换位置').grid(row=0, column=3, sticky=tk.W)
 
         self.gouliang_lb = tk.Checkbutton(
             food, text='左', variable=self.gouliang_4)
@@ -238,7 +245,7 @@ class Application(tk.Frame):
         self.gouliang_rb = tk.Checkbutton(
             food, text='右', variable=self.gouliang_5)
         self.gouliang_rb.grid(row=1, column=2)
-        tk.Label(food, text='队长').grid(row=1, column=3, sticky=tk.W)
+        tk.Label(food, text='队长狗粮更换位置').grid(row=1, column=3, sticky=tk.W)
         self.gouliang_lb.config(state=tk.DISABLED)
         self.gouliang_rb.config(state=tk.DISABLED)
 
@@ -336,7 +343,7 @@ class Application(tk.Frame):
         self.params.insert(tk.END, 'client: ' + str(self.client.current()))
         self.params.insert(tk.END, '\nrun_section: ' +
                            str(self.section.index('current')))
-        self.params.insert(tk.END, '\nrun_mode: '+str(self.run_mode.get()))
+        self.params.insert(tk.END, '\nrun_mode: ' + str(self.run_mode.get()))
         self.params.insert(tk.END, '\nrun_submode: ' +
                            str(self.run_submode.get()))
         self.params.insert(tk.END, '\nmax_times: ' + str(self.max_times.get()))
@@ -352,6 +359,9 @@ class Application(tk.Frame):
                            str(self.mitama_team_mark.current()))
         self.params.insert(tk.END, '\nexplore_mode: ' +
                            str(self.explore_mode.get()))
+        self.params.insert(tk.END, '\nautomatic_rotation: ' +
+                           str(self.automatic_rotation.get()))
+
         self.params.insert(tk.END, '\ngouliang: ' + str(self.gouliang))
         self.params.insert(tk.END, '\ngouliang_b: ' + str(self.gouliang_b))
         self.params.insert(tk.END, '\nfight_boss_enable: ' +
@@ -363,7 +373,7 @@ class Application(tk.Frame):
         self.params.insert(tk.END, '\nchange_shikigami: ' +
                            str(self.cmb.current()))
         self.params.insert(tk.END, '\ndebug_enable: ' +
-                           str(self.debug_enable.get())+'\n')
+                           str(self.debug_enable.get()) + '\n')
         self.params.insert(tk.END, '##########################\n\n')
         self.params.see(tk.END)
         self.params.config(state=tk.DISABLED)

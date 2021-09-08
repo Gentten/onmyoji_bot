@@ -53,6 +53,9 @@ class MyBattle(Application):
 
         # 探索参数
         self.conf.set('explore', 'explore_mode', str(self.explore_mode.get()))
+        # 自动轮换
+        self.conf.set('explore', 'automatic_rotation', str(self.automatic_rotation.get()))
+
         self.conf.set('explore', 'gouliang', str(self.gouliang))
         self.conf.set('explore', 'gouliang_b', str(self.gouliang_b))
         self.conf.set('explore', 'fight_boss_enable',
@@ -64,7 +67,10 @@ class MyBattle(Application):
         self.conf.set('explore', 'change_shikigami',
                       str(self.cmb.current()))
 
-    def get_conf(self):
+    def write_conf(self):
+        '''
+        写参数至配置文件
+        '''
         # 添加配置
         try:
             self.conf.add_section('watchdog')
@@ -85,8 +91,8 @@ class MyBattle(Application):
         # 显示参数
         self.show_params()
 
-        # 读取主要副本
-        self.get_conf()
+        # 写选择的配置到文件中用于onmyoji
+        self.write_conf()
 
         subprocess.Popen("cmd.exe /c start Core.exe")
         # os.system("onmyoji.exe")
