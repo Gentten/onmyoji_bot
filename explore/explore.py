@@ -19,7 +19,7 @@ class ExploreFight(Fighter):
 
         # 读取配置文件
         conf = configparser.ConfigParser()
-        conf.read('conf.ini')
+        conf.read('conf.ini', encoding="utf-8")
 
         # 读取狗粮配置
         if mode == 0:
@@ -43,6 +43,8 @@ class ExploreFight(Fighter):
         self.slide_shikigami_progress = conf.getint(
             'explore', 'slide_shikigami_progress')
         self.change_shikigami = conf.getint('explore', 'change_shikigami')
+        # 自动轮换
+        self.automatic_rotation = conf.getboolean('explore', 'automatic_rotation')
 
     def next_scene(self):
         '''
@@ -116,7 +118,7 @@ class ExploreFight(Fighter):
             length = end_x - star_x
 
             # 计算拖放范围
-            pos_end_x = int(star_x + length/100*self.slide_shikigami_progress)
+            pos_end_x = int(star_x + length / 100 * self.slide_shikigami_progress)
             pos_end_y = TansuoPos.n_slide[0][1]
 
             self.yys.mouse_drag_bg(
@@ -138,7 +140,7 @@ class ExploreFight(Fighter):
                     self.yys.mouse_drag_bg((191, 520), (301, 315))
                 ut.mysleep(1000)
 
-    def find_exp_moster(self):
+    def find_exp_monster(self):
         '''
         寻找经验怪
             return: 成功返回经验怪的攻打图标位置；失败返回-1
@@ -152,17 +154,17 @@ class ExploreFight(Fighter):
             if exp_pos == (0, 0):
                 return -1
             else:
-                exp_pos = (exp_pos[0]+2, exp_pos[1]+205)
+                exp_pos = (exp_pos[0] + 2, exp_pos[1] + 205)
 
         # 查找经验怪攻打图标位置
         find_pos = self.yys.find_game_img(
-            'img\\FIGHT.png', 1, (exp_pos[0]-150, exp_pos[1]-250), (exp_pos[0]+150, exp_pos[1]-50))
+            'img\\FIGHT.png', 1, (exp_pos[0] - 150, exp_pos[1] - 250), (exp_pos[0] + 150, exp_pos[1] - 50))
         if not find_pos:
             return -1
 
         # 返回经验怪攻打图标位置
-        fight_pos = ((find_pos[0]+exp_pos[0]-150),
-                     (find_pos[1]+exp_pos[1]-250))
+        fight_pos = ((find_pos[0] + exp_pos[0] - 150),
+                     (find_pos[1] + exp_pos[1] - 250))
         return fight_pos
 
     def find_boss(self):
@@ -177,10 +179,10 @@ class ExploreFight(Fighter):
             return -1
 
         # 返回BOSS攻打图标位置
-        fight_pos = ((find_pos[0]+2), (find_pos[1]+205))
+        fight_pos = ((find_pos[0] + 2), (find_pos[1] + 205))
         return fight_pos
 
-    def fight_moster(self, mood1, mood2):
+    def fight_monster(self, mood1, mood2):
         '''
         打经验怪
             :return: 打完普通怪返回1；打完boss返回2；未找到经验怪返回-1；未找到经验怪和boss返回-2
@@ -192,7 +194,7 @@ class ExploreFight(Fighter):
             self.log.info('进入探索页面')
 
             # 寻找经验怪，未找到则寻找boss，再未找到则退出
-            fight_pos = self.find_exp_moster()
+            fight_pos = self.find_exp_monster()
             boss = False
             if fight_pos == -1:
                 if self.fight_boss_enable:
@@ -209,17 +211,20 @@ class ExploreFight(Fighter):
             self.click_until('怪', 'img/YING-BING.png', fight_pos, step_time=0.3, appear=False)
             self.log.info('已进入战斗')
 
-            # 等待式神准备
-            self.yys.wait_game_img_knn('img\\ZHUN-BEI.png', thread=30)
-            self.log.info('式神准备完成')
+            # 自动轮换就不需要自己做操作了
+            if not self.automatic_rotation:
+                # 等待式神准备
+                self.yys.wait_game_img_knn('img\\ZHUN-BEI.png', thread=30)
+                self.log.info('式神准备完成')
 
-            # 检查狗粮经验
-            self.check_exp_full()
+                # 检查狗粮经验
+                self.check_exp_full()
 
-            # 点击准备，直到进入战斗
-            self.click_until_knn('准备按钮', 'img/ZHUN-BEI.png', *
-                            TansuoPos.ready_btn, mood1.get1mood()/1000, False, 30)
-
+                # 点击准备，直到进入战斗
+                self.click_until_knn('准备按钮', 'img/ZHUN-BEI.png', *
+                TansuoPos.ready_btn, mood1.get1mood() / 1000, False, 30)
+            else:
+                self.log.info('自动轮换不需要检查自动进入战斗')
             # 检查是否打完
             state = self.check_end()
             mood1.moodsleep()
@@ -246,7 +251,7 @@ class ExploreFight(Fighter):
             while self.run:
                 if i >= 4:
                     break
-                result = self.fight_moster(mood1, mood2)
+                result = self.fight_monster(mood1, mood2)
                 if result == 1:
                     continue
                 elif result == 2:

@@ -59,16 +59,22 @@ class ExplorePassenger(ExploreFight):
             elif maxVal_list[0] > 0.8 and maxVal_list[1] < 0.8:
                 self.start_time = time.time()
 
-                # 进入战斗，等待式神准备
-                self.yys.wait_game_img_knn('img/ZHUN-BEI.png', thread=30)
-                self.log.info('式神准备完成')
+                # 自动轮换就不需要自己做操作了
+                if not self.automatic_rotation:
 
-                # 检查狗粮经验
-                self.check_exp_full()
+                    # 等待式神准备
+                    self.yys.wait_game_img_knn('img\\ZHUN-BEI.png', thread=30)
+                    self.log.info('式神准备完成')
 
-                # 点击准备，直到进入战斗
-                self.click_until_knn('准备按钮', 'img/ZHUN-BEI.png', *
-                            TansuoPos.ready_btn, mood1.get1mood()/1000, False, thread=30)
+                    # 检查狗粮经验
+                    self.check_exp_full()
+
+                    # 点击准备，直到进入战斗
+                    self.click_until_knn('准备按钮', 'img/ZHUN-BEI.png', *
+                    TansuoPos.ready_btn, mood1.get1mood() / 1000, False, 30)
+
+                else:
+                    self.log.info('自动轮换不需要检查自动进入战斗')
 
                 # 检测是否打完
                 state = self.check_end()

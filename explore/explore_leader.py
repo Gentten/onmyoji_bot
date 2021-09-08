@@ -62,7 +62,7 @@ class ExploreLeader(ExploreFight):
             while self.run:
                 if i >= 4:
                     break
-                result = self.fight_moster(mood1, mood2)
+                result = self.fight_monster(mood1, mood2)
                 if result == 1:
                     ok = True
                     continue
@@ -83,16 +83,20 @@ class ExploreLeader(ExploreFight):
                 self.yys.mouse_click_bg(fight_pos)
                 self.log.info('已进入战斗')
 
-                # 等待式神准备
-                self.yys.wait_game_img_knn('img/ZHUN-BEI.png', thread=30)
-                self.log.info('式神准备完成')
+                # 自动轮换就不需要自己做操作了
+                if not self.automatic_rotation:
+                    # 等待式神准备
+                    self.yys.wait_game_img_knn('img\\ZHUN-BEI.png', thread=30)
+                    self.log.info('式神准备完成')
 
-                # 检查狗粮经验
-                self.check_exp_full()
+                    # 检查狗粮经验
+                    self.check_exp_full()
 
-                # 点击准备，直到进入战斗
-                self.click_until_knn('准备按钮', 'img/ZHUN-BEI.png', *
-                                     TansuoPos.ready_btn, mood1.get1mood()/1000, False, 30)
+                    # 点击准备，直到进入战斗
+                    self.click_until_knn('准备按钮', 'img/ZHUN-BEI.png', *
+                    TansuoPos.ready_btn, mood1.get1mood() / 1000, False, 30)
+                else:
+                    self.log.info('自动轮换不需要检查自动进入战斗')
 
                 # 检查是否打完
                 state = self.check_end()
@@ -119,7 +123,7 @@ class ExploreLeader(ExploreFight):
             self.yys.wait_game_img('img/QUE-DING.png', self.max_win_time)
             time.sleep(0.5)
             self.click_until('继续邀请', 'img/QUE-DING.png', *
-                             TansuoPos.yaoqing_comfirm, mood3.get1mood()/1000, False)
+            TansuoPos.yaoqing_comfirm, mood3.get1mood() / 1000, False)
 
             # 检查游戏次数
             self.check_times()

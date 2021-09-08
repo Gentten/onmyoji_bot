@@ -135,7 +135,7 @@ if __name__ == "__main__":
             success = ctypes.windll.user32.SetProcessDPIAware()
             # behaviour on later OSes is undefined, although when I run it on my Windows 10 machine, it seems to work with effects identical to SetProcessDpiAwareness(1)
 
-            # 设置战斗参数
+            # 启动窗口以设置战斗参数
             root = tk.Tk()
             app = MyBattle(root)
             app.mainloop()

@@ -36,7 +36,7 @@ class GameControl():
         self._border_l = ((r1 - l1) - (r2 - l2)) // 2
         self._border_t = ((b1 - t1) - (b2 - t2)) - self._border_l
         conf = configparser.ConfigParser()
-        conf.read('conf.ini')
+        conf.read('conf.ini', encoding="utf-8")
         self.client = conf.getint('DEFAULT', 'client')
         if self.client == 1:
             os.system('adb connect 127.0.0.1:7555')
@@ -354,11 +354,15 @@ class GameControl():
             pos_rand = (random.randint(
                 pos[0], pos_end[0]), random.randint(pos[1], pos_end[1]))
         if self.client == 0:
+            # 鼠标移动到指定位置
             win32gui.SendMessage(self.hwnd, win32con.WM_MOUSEMOVE,
                                  0, win32api.MAKELONG(pos_rand[0], pos_rand[1]))
+            # 鼠标左键按下
             win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONDOWN,
                                  0, win32api.MAKELONG(pos_rand[0], pos_rand[1]))
+            # 按下的延迟
             time.sleep(random.randint(20, 80)/1000)
+            # 鼠标左键松开
             win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP,
                                  0, win32api.MAKELONG(pos_rand[0], pos_rand[1]))
         else:

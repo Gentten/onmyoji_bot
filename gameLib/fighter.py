@@ -26,7 +26,7 @@ class Fighter(GameScene):
 
         # 读取配置文件
         conf = configparser.ConfigParser()
-        conf.read('conf.ini')
+        conf.read('conf.ini', encoding="utf-8")
         self.client = conf.getint('DEFAULT', 'client')
         quit_game_enable = conf.getboolean('watchdog', 'watchdog_enable')
         self.max_op_time = conf.getint('watchdog', 'max_op_time')

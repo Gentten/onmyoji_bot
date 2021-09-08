@@ -14,7 +14,7 @@ class SingleFight(Fighter):
 
         # 读取配置文件
         conf = configparser.ConfigParser()
-        conf.read('conf.ini')
+        conf.read('conf.ini', encoding="utf-8")
         self.run_submode = conf.getint('mitama', 'run_submode')
 
     def start(self):
