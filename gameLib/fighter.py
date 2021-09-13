@@ -78,12 +78,13 @@ class Fighter(GameScene):
         self.log.info('检测是战斗是否结束')
         start_time = time.time()
         myend = -1
-        while time.time()-start_time <= self.max_win_time and self.run:
+        while time.time() - start_time <= self.max_win_time and self.run:
             # 拒绝悬赏
             self.yys.rejectbounty()
 
             maxVal, maxLoc = self.yys.find_multi_img(
-                'img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png')
+                'img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png',
+                'img/DA-KAI-JANG-LI.png', 'img/S-H.png')
             end_cof = max(maxVal)
             if end_cof > 0.9:
                 myend = maxVal.index(end_cof)
@@ -101,13 +102,13 @@ class Fighter(GameScene):
         监测游戏次数是否达到最大次数
         '''
         self.run_times = self.run_times + 1
-        self.log.info('游戏已运行'+str(self.run_times)+'次')
-        if(self.run_times == self.max_times):
-            if(self.end_operation == 0):
+        self.log.info('游戏已运行' + str(self.run_times) + '次')
+        if (self.run_times == self.max_times):
+            if (self.end_operation == 0):
                 self.log.warning('关闭脚本(次数已满)...')
                 self.run = False
                 os._exit(0)
-            elif(self.end_operation == 1):
+            elif (self.end_operation == 1):
                 self.log.warning('关闭游戏(次数已满)...')
                 self.yys.quit_game()
                 self.log.warning('关闭脚本(次数已满)...')
@@ -127,7 +128,7 @@ class Fighter(GameScene):
             self.log.info('点击结算')
             mood.moodsleep()
         start_time = time.time()
-        while time.time()-start_time <= self.max_op_time and self.run:
+        while time.time() - start_time <= self.max_op_time and self.run:
             # 拒绝悬赏
             self.yys.rejectbounty()
 
@@ -157,6 +158,16 @@ class Fighter(GameScene):
                 'img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png')
             if max(maxVal) < 0.9:
                 self.log.info('结算成功')
+                # 正常结算
+                # 在检测一次
+                mood.moodsleep()
+                maxVal, maxLoc = self.yys.find_multi_img('img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png')
+                if max(maxVal) > 0.9:
+                    # 结算后还在结算页面
+                    newpos = (mypos[0] + random.randint(-50, 50),
+                              mypos[1] + random.randint(-50, 50))
+                    self.yys.mouse_click_bg(newpos)
+                    self.log.info('点击退出结算')
                 return
 
         self.log.warning('点击结算失败!')
@@ -215,11 +226,11 @@ class Fighter(GameScene):
         '''
         # 在指定时间内反复监测画面并点击
         start_time = time.time()
-        while time.time()-start_time <= self.max_op_time and self.run:
+        while time.time() - start_time <= self.max_op_time and self.run:
             # 点击指定位置
             self.yys.mouse_click_bg(pos, pos_end)
             self.log.info('点击 ' + tag)
-            ut.mysleep(step_time*1000)
+            ut.mysleep(step_time * 1000)
 
             result = self.yys.find_game_img(img_path)
             if not appear:
@@ -243,11 +254,11 @@ class Fighter(GameScene):
         '''
         # 在指定时间内反复监测画面并点击
         start_time = time.time()
-        while time.time()-start_time <= self.max_op_time and self.run:
+        while time.time() - start_time <= self.max_op_time and self.run:
             # 点击指定位置
             self.yys.mouse_click_bg(pos, pos_end)
             self.log.info('点击 ' + tag)
-            ut.mysleep(step_time*1000)
+            ut.mysleep(step_time * 1000)
 
             maxval, _ = self.yys.find_multi_img(*img_path)
             if max(maxval) > 0.9:
@@ -271,11 +282,11 @@ class Fighter(GameScene):
         '''
         # 在指定时间内反复监测画面并点击
         start_time = time.time()
-        while time.time()-start_time <= self.max_op_time and self.run:
+        while time.time() - start_time <= self.max_op_time and self.run:
             # 点击指定位置并等待下一轮
             self.yys.mouse_click_bg(pos, pos_end)
             self.log.info('点击 ' + tag)
-            ut.mysleep(step_time*1000)
+            ut.mysleep(step_time * 1000)
 
             result = self.yys.find_game_img_knn(img_path, thread=thread)
             if not appear:
