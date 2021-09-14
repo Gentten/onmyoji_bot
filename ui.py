@@ -1,4 +1,4 @@
-from gui.tkui import Application
+from gui.boot_application import Application
 from tools.logsystem import MyLog
 
 import configparser

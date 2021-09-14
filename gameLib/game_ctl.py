@@ -496,7 +496,7 @@ class GameControl():
         拒绝悬赏
             :return: 拒绝成功返回True，其他情况返回False
         '''
-        maxVal, maxLoc = self.find_img('img\\XUAN-SHANG.png')
+        maxVal, maxLoc = self.find_img('img\\xsfx.png')
         if maxVal > 0.9:
             self.mouse_click_bg((757, 460))
             return True

@@ -64,10 +64,10 @@ class Application(tk.Frame):
         self.create_section()
 
         # 创建选项
-        self.create_frame0()
-        self.create_frame1()
-        self.create_frame2()
-        self.create_frame3()
+        self.create_frame_mitama()
+        self.create_frame_yuling()
+        self.create_frame_explore()
+        self.create_frame_about()
 
         # 创建次数菜单
         self.create_times()
@@ -139,29 +139,29 @@ class Application(tk.Frame):
         self.section = ttk.Notebook(self.main_frame1)
 
         # 创建选项卡1---御魂
-        self.frame0 = tk.Frame(self.section)
-        self.section.add(self.frame0, text='御魂')
+        self.frame_mitama = tk.Frame(self.section)
+        self.section.add(self.frame_mitama, text='御魂')
 
         # 创建选项卡2---御灵
-        self.frame1 = tk.Frame(self.section)
-        self.section.add(self.frame1, text='御灵')
+        self.frame_yuling = tk.Frame(self.section)
+        self.section.add(self.frame_yuling, text='御灵')
 
         # 创建选项卡3---探索
-        self.frame2 = tk.Frame(self.section, padx=5, pady=5)
-        self.section.add(self.frame2, text='探索')
+        self.frame_explore = tk.Frame(self.section, padx=5, pady=5)
+        self.section.add(self.frame_explore, text='探索')
 
         # 创建选项卡4---关于
-        self.frame3 = tk.Frame(self.section)
-        self.section.add(self.frame3, text='关于')
+        self.frame_about = tk.Frame(self.section)
+        self.section.add(self.frame_about, text='关于')
 
         self.section.pack(fill=tk.BOTH, expand=True)
 
-    def create_frame0(self):
+    def create_frame_mitama(self):
         '''
         御魂参数
         '''
         # 游戏模式
-        mode = tk.LabelFrame(self.frame0, text='模式')
+        mode = tk.LabelFrame(self.frame_mitama, text='模式')
         mode.pack(padx=5, pady=5, fill=tk.BOTH)
         self.run_mode = tk.IntVar()
         self.run_mode.set(0)
@@ -175,7 +175,7 @@ class Application(tk.Frame):
                        value=3).grid(row=1, column=1, sticky=tk.W)
 
         # 游戏副本
-        submode = tk.LabelFrame(self.frame0, text='副本(请锁定阵容)')
+        submode = tk.LabelFrame(self.frame_mitama, text='副本(请锁定阵容)')
         submode.pack(padx=5, pady=5, fill=tk.BOTH, expand=True)
         tk.Radiobutton(submode, text='八岐大蛇', variable=self.run_submode,
                        value=0).grid(row=0, column=0, sticky=tk.W)
@@ -185,7 +185,7 @@ class Application(tk.Frame):
                        value=2).grid(row=1, column=0, sticky=tk.W)
 
         # 标记式神
-        mitama_mark = tk.Frame(self.frame0, padx=5, pady=5)
+        mitama_mark = tk.Frame(self.frame_mitama, padx=5, pady=5)
         mitama_mark.pack(fill=tk.X, expand=True)
         tk.Label(mitama_mark, text='标记己方式神:').pack(side=tk.LEFT)
         self.mitama_team_mark = ttk.Combobox(mitama_mark, width=10)
@@ -195,21 +195,21 @@ class Application(tk.Frame):
         self.mitama_team_mark.current(0)
         self.mitama_team_mark.config(state='readonly')
 
-    def create_frame1(self):
+    def create_frame_yuling(self):
         '''
         御灵参数
         '''
-        text = tk.Text(self.frame1, height=5, width=25)
+        text = tk.Text(self.frame_yuling, height=5, width=25)
         text.pack(padx=5, pady=5, expand=True, fill=tk.BOTH, anchor=tk.NW)
         text.insert(tk.END, '选择好要打的御灵及层数，点击开始按钮即可。')
         text.config(state=tk.DISABLED)
 
-    def create_frame2(self):
+    def create_frame_explore(self):
         '''
         探索参数
         '''
         # 副本选择
-        submode = tk.LabelFrame(self.frame2, text='模式')
+        submode = tk.LabelFrame(self.frame_explore, text='模式')
         submode.pack(fill=tk.BOTH, expand=True)
         tk.Radiobutton(submode, text='单刷', variable=self.explore_mode,
                        value=0, command=lambda: self.gouliang_state(1)).grid(row=0, column=0, sticky=tk.W)
@@ -227,7 +227,7 @@ class Application(tk.Frame):
         self.automatic_rotation_pack.grid(row=0, column=0)
 
         # 狗粮设置
-        food = tk.LabelFrame(self.frame2, text='更换狗粮 (勿锁定阵容)')
+        food = tk.LabelFrame(self.frame_explore, text='更换狗粮 (勿锁定阵容)')
         food.pack(fill=tk.BOTH, expand=True)
         self.gouliang_l = tk.Checkbutton(food, text='左', variable=self.gouliang_1)
         self.gouliang_l.grid(row=0, column=0)
@@ -250,25 +250,25 @@ class Application(tk.Frame):
         self.gouliang_rb.config(state=tk.DISABLED)
 
         # 换狗粮设置
-        tk.Checkbutton(self.frame2, text='换狗粮拖放式神进度条，进度:',
+        tk.Checkbutton(self.frame_explore, text='换狗粮拖放式神进度条，进度:',
                        variable=self.slide_shikigami).pack(anchor=tk.W)
-        tk.Scale(self.frame2, from_=0, to=100, orient=tk.HORIZONTAL, showvalue=0,
+        tk.Scale(self.frame_explore, from_=0, to=100, orient=tk.HORIZONTAL, showvalue=0,
                  variable=self.slide_shikigami_progress).pack(fill=tk.X)
-        self.cmb = ttk.Combobox(self.frame2)
+        self.cmb = ttk.Combobox(self.frame_explore)
         self.cmb['value'] = ('更换素材', '更换N卡', '更换R卡')
         self.cmb.pack(fill=tk.X, padx=2)
         self.cmb.current(self.change_shikigami)
         self.cmb.config(state='readonly')
 
         # 打BOSS设置
-        tk.Checkbutton(self.frame2, text='结束后打BOSS',
+        tk.Checkbutton(self.frame_explore, text='结束后打BOSS',
                        variable=self.fight_boss_enable).pack(anchor=tk.W)
 
-    def create_frame3(self):
+    def create_frame_about(self):
         '''
         关于
         '''
-        text = tk.Text(self.frame3, height=5, width=25)
+        text = tk.Text(self.frame_about, height=5, width=25)
         text.pack(expand=True, fill=tk.BOTH)
         text.insert(
             tk.END, '网站：%s\n\n' % (self.url))
