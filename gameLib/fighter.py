@@ -143,11 +143,14 @@ class Fighter(GameScene):
                                                      'img/JIE-SU.png')
             # 表示找到了还在打开奖励页面
             if max(maxVal) > 0.9:
-                # 点击一次结算
-                self.yys.mouse_click_bg(mypos)
-                self.log.info('点击结算')
-                mood.moodsleep()
-
+                # double check 上次可能检测到还在，但是实际上已经到了点击挑战页面 这是个无法解决的问题 只能减缓目前，游戏和脚本是并发的画面是动的
+                maxVal, maxLoc = self.yys.find_multi_img('img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png',
+                                                         'img/JIE-SU.png')
+                if max(maxVal) > 0.9:
+                    # 点击一次结算
+                    self.yys.mouse_click_bg(mypos)
+                    self.log.info('点击结算')
+                    mood.moodsleep()
             # 错误纠正
             maxVal, maxLoc = self.yys.find_multi_img(
                 'img/FA-SONG-XIAO-XI.png', 'img/ZHI-LIAO-LIANG.png')
@@ -169,8 +172,10 @@ class Fighter(GameScene):
                                                          'img/JIE-SU.png')
                 if max(maxVal) > 0.9:
                     # 结算后还在结算页面
-                    newpos = (mypos[0] + random.randint(-50, 50),
-                              mypos[1] + random.randint(-50, 50))
+                    while True:
+                        newpos = (mypos[0] + random.randint(-50, 50), mypos[1] + random.randint(-50, 50))
+                        if ut.checkposition(newpos):
+                            break
                     self.yys.mouse_click_bg(newpos)
                     self.log.info('点击退出结算')
                 return
