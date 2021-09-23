@@ -1,3 +1,4 @@
+from activities.single_activities_fight import ActivitiesFight
 from explore.explore import ExploreFight
 from explore.explore_passenger import ExplorePassenger
 from explore.explore_leader import ExploreLeader
@@ -75,7 +76,9 @@ def init():
         elif mode == 3:
             # 双开
             fight = ExploreDual()
-
+    elif section == 3:
+        # 活动
+        fight = ActivitiesFight()
     fight.start()
 
 

@@ -437,6 +437,7 @@ class GameControl():
                 time.sleep(0.1)
         if quit:
             # 超时则退出游戏
+            logging.info('退出，未找到指定场景')
             self.quit_game()
         else:
             return False
