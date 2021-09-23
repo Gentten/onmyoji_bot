@@ -90,11 +90,11 @@ class Fighter(GameScene):
                 myend = maxVal.index(end_cof)
                 break
             time.sleep(0.5)
-        if myend in [0, 3]:
-            self.log.info('战斗成功')
+        if myend in [0, 3, 5]:
+            self.log.info('战斗成功，未打开奖励')
             return 0
-        elif myend in [1, 2]:
-            self.log.info('本轮战斗结束')
+        elif myend in [1, 2, 4]:
+            self.log.info('本轮战斗结束,即打开了奖励')
             return 1
 
     def check_times(self):
@@ -138,11 +138,15 @@ class Fighter(GameScene):
                 if ut.checkposition(newpos):
                     mypos = newpos
                     break
-
-            # 点击一次结算
-            self.yys.mouse_click_bg(mypos)
-            self.log.info('点击结算')
-            mood.moodsleep()
+            # 检查上次点击是否已经结算成功了
+            maxVal, maxLoc = self.yys.find_multi_img('img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png',
+                                                     'img/JIE-SU.png')
+            # 表示找到了还在打开奖励页面
+            if max(maxVal) > 0.9:
+                # 点击一次结算
+                self.yys.mouse_click_bg(mypos)
+                self.log.info('点击结算')
+                mood.moodsleep()
 
             # 错误纠正
             maxVal, maxLoc = self.yys.find_multi_img(
@@ -161,7 +165,8 @@ class Fighter(GameScene):
                 # 正常结算
                 # 在检测一次
                 mood.moodsleep()
-                maxVal, maxLoc = self.yys.find_multi_img('img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png')
+                maxVal, maxLoc = self.yys.find_multi_img('img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png',
+                                                         'img/JIE-SU.png')
                 if max(maxVal) > 0.9:
                     # 结算后还在结算页面
                     newpos = (mypos[0] + random.randint(-50, 50),
