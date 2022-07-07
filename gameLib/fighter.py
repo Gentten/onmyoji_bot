@@ -166,8 +166,8 @@ class Fighter(GameScene):
             if max(maxVal) < 0.9:
                 self.log.info('结算成功')
                 # 正常结算
-                # 在检测一次
-                mood.moodsleep()
+                # 在检测一次 不睡眠
+                # mood.moodsleep()
                 maxVal, maxLoc = self.yys.find_multi_img('img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png',
                                                          'img/JIE-SU.png')
                 if max(maxVal) > 0.9:

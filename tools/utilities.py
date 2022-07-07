@@ -66,7 +66,9 @@ class Mood:
             self.lastmood = Mood.mymood[a]
             logging.info("修改延迟参数，等级 %d", a)
         return self.lastmood
-
+    '''
+      delay.json 的疲劳延迟
+    '''
     def moodsleep(self):
         mysleep(*self.getmood())
 
