@@ -33,6 +33,8 @@ class Fighter(GameScene):
         self.max_win_time = conf.getint('watchdog', 'max_win_time')
         self.mitama_team_mark = conf.getint('mitama', 'mitama_team_mark')
         self.max_times = conf.getint('DEFAULT', 'max_times')
+        self.section = conf.getint('DEFAULT', 'run_section')
+        self.conf=conf
         self.end_operation = conf.getint('DEFAULT', 'end_operation')
         self.run_times = 0
 
@@ -118,6 +120,7 @@ class Fighter(GameScene):
     def get_reward(self, mood, state):
         '''
         结算处理
+            :param section: 战斗选项场景
             :param mood: 状态函数
             :param state: 上一步的状态。0-战斗成功页面; 1-领取奖励页面
         '''
@@ -159,7 +162,6 @@ class Fighter(GameScene):
                 self.log.info('错误纠正')
                 mood.moodsleep()
                 continue
-
             # 正常结算
             maxVal, maxLoc = self.yys.find_multi_img(
                 'img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png')
@@ -179,7 +181,21 @@ class Fighter(GameScene):
                     self.yys.mouse_click_bg(newpos)
                     self.log.info('点击退出结算')
                 return
+        #纠正提前退出问题
+        maxVal, maxLoc
+        # 御魂提前推出调整  单人则是挑战 组队则是协战队伍
+        if self.section == 0:
+            maxVal, maxLoc = self.yys.find_multi_img('img/TIAO-ZHAN.png', 'img/XIE-ZHAN-DUI-WU.png')
+        # 御灵提前推出调整  单人则是挑战 组队则是协战队伍
+        if self.section == 1:
+            maxVal, maxLoc = self.yys.find_multi_img('img/TIAO-ZHAN.png')
+        # 在探索是意外提前结算成功是樱饼
+        if self.section == 2:
+            maxVal, maxLoc = self.yys.find_multi_img('img/YING-BING.png')
 
+        if max(maxVal) > 0.9:
+            self.log.info('提前结算错误纠正')
+            return
         self.log.warning('点击结算失败!')
         # 提醒玩家点击失败，并在5s后退出
         self.yys.activate_window()
