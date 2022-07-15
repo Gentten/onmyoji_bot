@@ -69,7 +69,7 @@ class Fighter(GameScene):
     def check_battle(self):
         # 检测是否进入战斗
         self.log.info('检测是否进入战斗')
-        self.yys.wait_game_img('img\\ZI-DONG.png', self.max_win_time)
+        self.yys.wait_game_img('img\\Zi-DONG-YU-HUN.jpg', self.max_win_time)
         self.log.info('已进入战斗')
 
     def check_end(self):

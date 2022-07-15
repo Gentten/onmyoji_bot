@@ -499,7 +499,7 @@ class GameControl():
         '''
         maxVal, maxLoc = self.find_img('img\\xsfx.png')
         if maxVal > 0.9:
-            self.mouse_click_bg((757, 460))
+            self.mouse_click_bg((757, 464))
             return True
         return False
 
