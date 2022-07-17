@@ -24,7 +24,7 @@ class ActivitiesFight(Fighter):
             if max(maxVal) > 0.9:
                 self.get_reward(mood3, 1)
 
-            # 在活动，点击“挑战”按钮, 需要使用“阵容锁定”！
+            # 在活动，点击“挑战”按钮, 需要使用“阵容锁定”！  活动修改
             self.yys.wait_game_img_knn('img\\activities\\SHILING-TIAO-ZHAN.png',
                                        self.max_win_time, thread=20)
             mood1.moodsleep()

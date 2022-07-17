@@ -1,4 +1,4 @@
-from activities.single_activities_fight import ActivitiesFight
+from other.single_activities_fight import ActivitiesFight
 from explore.explore import ExploreFight
 from explore.explore_passenger import ExplorePassenger
 from explore.explore_leader import ExploreLeader
@@ -8,6 +8,7 @@ from mitama.dual import DualFighter
 from mitama.fighter_driver import DriverFighter
 from mitama.fighter_passenger import FighterPassenger
 from mitama.single_fight import SingleFight
+from other.single_yeyuanhuo_fight import YeYuanHuoFight
 from tools.logsystem import MyLog
 
 import configparser
@@ -77,6 +78,9 @@ def init():
             # 双开
             fight = ExploreDual()
     elif section == 3:
+        # 业原火
+        fight = YeYuanHuoFight()
+    elif section == 4:
         # 活动
         fight = ActivitiesFight()
     fight.start()
