@@ -29,11 +29,15 @@ class SingleFight(Fighter):
         elif self.run_submode == 2:
             self.switch_to_scene(8)
         while self.run:
+
             # 在御魂主选单，点击“挑战”按钮, 需要使用“阵容锁定”！
             self.yys.wait_game_img_knn(
                 'img\\TIAO-ZHAN.png', max_time=self.max_win_time, thread=20)
+
             mood1.moodsleep()
+
             self.yys.mouse_click_bg(*YuhunPos.tiaozhan_btn)
+
             self.click_until_knn('挑战按钮', 'img\\TIAO-ZHAN.png',
                                  *YuhunPos.tiaozhan_btn, appear=False, thread=20)
 

@@ -36,6 +36,7 @@ class Fighter(GameScene):
         self.section = conf.getint('DEFAULT', 'run_section')
         self.conf=conf
         self.end_operation = conf.getint('DEFAULT', 'end_operation')
+        self.magatama_reject = conf.getboolean('DEFAULT', 'magatama_reject')
         self.run_times = 0
 
         # 启动日志
@@ -77,7 +78,7 @@ class Fighter(GameScene):
         检测是否打完
             :return: 胜利页面返回0；奖励页面返回1
         '''
-        self.log.info('检测是战斗是否结束')
+        self.log.info('检测战斗是否结束')
         start_time = time.time()
         myend = -1
         while time.time() - start_time <= self.max_win_time and self.run:
@@ -181,6 +182,8 @@ class Fighter(GameScene):
                     self.yys.mouse_click_bg(newpos)
                     self.log.info('点击退出结算')
                 return
+        # 尝试一次拒绝悬赏
+        self.yys.rejectbounty()
         #纠正提前退出问题
         maxVal, maxLoc
         # 御魂提前推出调整  单人则是挑战 组队则是协战队伍
@@ -253,6 +256,7 @@ class Fighter(GameScene):
         # 在指定时间内反复监测画面并点击
         start_time = time.time()
         while time.time() - start_time <= self.max_op_time and self.run:
+
             # 点击指定位置
             self.yys.mouse_click_bg(pos, pos_end)
             self.log.info('点击 ' + tag)
@@ -264,6 +268,8 @@ class Fighter(GameScene):
             if result:
                 self.log.info('点击 ' + tag + ' 成功')
                 return True
+                # 防止悬赏导致点击超时
+            self.yys.rejectbounty()
 
         # 提醒玩家点击失败，并在5s后退出
         self.click_failed(tag)
@@ -285,12 +291,13 @@ class Fighter(GameScene):
             self.yys.mouse_click_bg(pos, pos_end)
             self.log.info('点击 ' + tag)
             ut.mysleep(step_time * 1000)
-
+            # 检测是否成功
             maxval, _ = self.yys.find_multi_img(*img_path)
             if max(maxval) > 0.9:
                 self.log.info('点击 ' + tag + ' 成功')
                 return True
-
+            # 失败则防止悬赏导致点击超时
+            self.yys.rejectbounty()
         # 提醒玩家点击失败，并在5s后退出
         self.click_failed(tag)
 
@@ -320,6 +327,8 @@ class Fighter(GameScene):
             if result:
                 self.log.info('点击 ' + tag + ' 成功')
                 return True
+            # 防止悬赏导致点击超时
+            self.yys.rejectbounty()
 
         # 提醒玩家点击失败，并在5s后退出
         self.click_failed(tag)
