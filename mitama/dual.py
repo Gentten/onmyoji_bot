@@ -14,7 +14,7 @@ def get_all_hwnd(hwnd, mouse):
     获取所有阴阳师窗口
     '''
     if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
-        if win32gui.GetWindowText(hwnd) == u'阴阳师-网易游戏':
+        if '阴阳师-网易游戏' in win32gui.GetWindowText(hwnd):
             hwndlist.append(hwnd)
 
 
