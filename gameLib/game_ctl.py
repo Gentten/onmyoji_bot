@@ -516,6 +516,8 @@ class GameControl():
         maxVal, maxLoc = self.find_img('img\\XuanShangFengYinXie.png')
         if maxVal > 0.9:
             logging.info("收到悬赏封印")
+            # 人的反应延迟
+            time.sleep(random.randint(100, 500) / 1000.0)
             # 不拒绝勾协
             if not self.magatama_reject:
                 # 判断是否勾协
