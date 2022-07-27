@@ -45,6 +45,8 @@ class ExploreFight(Fighter):
         self.change_shikigami = conf.getint('explore', 'change_shikigami')
         # 自动轮换
         self.automatic_rotation = conf.getboolean('explore', 'automatic_rotation')
+        # 打怪类型
+        self.monster_type = conf.getint('explore', 'monster_type')
 
     '''
           移动至下一个场景，每次移动400~500像素
@@ -170,6 +172,21 @@ class ExploreFight(Fighter):
                      (find_pos[1] + exp_pos[1] - 250))
         return fight_pos
 
+    def find_not_boss(self):
+        '''
+        寻找BOSS
+            :return: 成功返回非BOSS的攻打图标位置；失败返回-1
+        '''
+        # 查找非BOSS攻打图标位置
+        find_pos = self.yys.find_game_img(
+            'img\\FIGHT_MONSTER.png', 1, (2, 205), (1127, 545))
+        if not find_pos:
+            return -1
+
+        # 返回非BOSS攻打图标位置
+        fight_pos = ((find_pos[0] + 2), (find_pos[1] + 205))
+        return fight_pos
+
     def find_boss(self):
         '''
         寻找BOSS
@@ -185,6 +202,30 @@ class ExploreFight(Fighter):
         fight_pos = ((find_pos[0] + 2), (find_pos[1] + 205))
         return fight_pos
 
+    def find_red_monster(self):
+            '''
+            寻找红达摩怪
+                return: 成功返回怪的攻打图标位置；失败返回-1
+            '''
+            # 查红达摩图标
+            red_pos = self.yys.find_img_knn(
+                    'img\\HONG-DA-MO.png', 1, (2, 205), (1127, 545))
+            if red_pos == (0, 0):
+                return -1
+            else:
+                red_pos = (red_pos[0] + 2, red_pos[1] + 205)
+
+            # 查找怪攻打图标位置
+            find_pos = self.yys.find_game_img(
+                'img\\FIGHT.png', 1, (red_pos[0] - 150, red_pos[1] - 250), (red_pos[0] + 150, red_pos[1] - 50))
+            if not find_pos:
+                return -1
+
+            # 返回经打图标位置
+            fight_pos = ((find_pos[0] + red_pos[0] - 150),
+                         (find_pos[1] + red_pos[1] - 250))
+            return fight_pos
+
     def fight_monster(self, mood1, mood2):
         '''
         打经验怪
@@ -196,18 +237,23 @@ class ExploreFight(Fighter):
             self.yys.wait_game_img('img\\YING-BING.png')
             self.log.info('进入探索页面')
 
-            # 寻找经验怪，未找到则寻找boss，再未找到则退出
-            fight_pos = self.find_exp_monster()
+            # 寻找指定怪 ，未找到则寻找boss，再未找到则退出
+            if self.monster_type == 1:
+                fight_pos = self.find_exp_monster()
+            elif self.monster_type ==2:
+                fight_pos = self.find_red_monster()
+            else:
+                fight_pos = self.find_not_boss()
             boss = False
             if fight_pos == -1:
                 if self.fight_boss_enable:
                     fight_pos = self.find_boss()
                     boss = True
                     if fight_pos == -1:
-                        self.log.info('未找到经验怪和boss')
+                        self.log.info('未找到指定怪和boss')
                         return -2
                 else:
-                    self.log.info('未找到经验怪')
+                    self.log.info('未找到指定怪')
                     return -1
 
             # 攻击怪
