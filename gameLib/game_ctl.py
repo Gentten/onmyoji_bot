@@ -436,8 +436,8 @@ class GameControl():
         self.rejectbounty()
         start_time = time.time()
         while time.time() - start_time <= max_time and self.run:
-
             maxLoc = self.find_img_knn(img_path, thread=thread)
+            logging.info("等待图像" + img_path)
             if maxLoc != (0, 0):
                 return maxLoc
             # 避免悬赏封印带来

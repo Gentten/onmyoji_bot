@@ -34,7 +34,7 @@ class Fighter(GameScene):
         self.mitama_team_mark = conf.getint('mitama', 'mitama_team_mark')
         self.max_times = conf.getint('DEFAULT', 'max_times')
         self.section = conf.getint('DEFAULT', 'run_section')
-        self.conf=conf
+        self.conf = conf
         self.end_operation = conf.getint('DEFAULT', 'end_operation')
         self.magatama_reject = conf.getboolean('DEFAULT', 'magatama_reject')
         self.run_times = 0
@@ -86,7 +86,7 @@ class Fighter(GameScene):
             self.yys.rejectbounty()
             # 提前自动开启的奖励覆盖在战斗前
             maxVal, maxLoc = self.yys.find_img('img/HUO-DE-JIANG-LI.png')
-            if(maxVal>0.9):
+            if (maxVal > 0.9):
                 self.log.info('本轮战斗结束,提前奖励覆盖在战斗胜利界面')
                 return 2
             maxVal, maxLoc = self.yys.find_multi_img(
@@ -134,13 +134,33 @@ class Fighter(GameScene):
         if state in [0, 2]:
             self.yys.mouse_click_bg(mypos)
             self.log.info('点击结算')
-            if state == 0:
-                mood.moodsleep()
+            mood.moodsleep()
         start_time = time.time()
+        # 战斗成功被覆盖在奖励页面 需要点击一下到胜利页面
+        if state == 2:
+            while time.time() - start_time <= self.max_op_time and self.run:
+                # 拒绝悬赏
+                self.yys.rejectbounty()
+                while True:
+                    newpos = (mypos[0] + random.randint(-50, 50),
+                              mypos[1] + random.randint(-50, 50))
+                    if ut.checkposition(newpos):
+                        mypos = newpos
+                        break
+                # 检查上次点击是否已经结算成功了
+                maxVal,maxLoc = self.yys.find_img('img/HUO-DE-JIANG-LI.png')
+                if maxVal < 0.9:
+                    # 不在奖励在结束页面的成功
+                    break
+                else:
+                    # 还在奖励则点击一下
+                    self.yys.mouse_click_bg(mypos)
+                    self.log.info('还在特殊奖励页面，点击退出奖励')
+                    mood.moodsleep()
+
         while time.time() - start_time <= self.max_op_time and self.run:
             # 拒绝悬赏
             self.yys.rejectbounty()
-
             while True:
                 newpos = (mypos[0] + random.randint(-50, 50),
                           mypos[1] + random.randint(-50, 50))
@@ -161,8 +181,7 @@ class Fighter(GameScene):
                     self.log.info('点击结算')
                     mood.moodsleep()
             # 错误纠正
-            maxVal, maxLoc = self.yys.find_multi_img(
-                'img/FA-SONG-XIAO-XI.png', 'img/ZHI-LIAO-LIANG.png')
+            maxVal, maxLoc = self.yys.find_multi_img('img/FA-SONG-XIAO-XI.png', 'img/ZHI-LIAO-LIANG.png')
             if max(maxVal) > 0.9:
                 self.yys.mouse_click_bg((35, 295), (140, 475))
                 self.log.info('错误纠正')
@@ -189,7 +208,7 @@ class Fighter(GameScene):
                 return
         # 尝试一次拒绝悬赏
         self.yys.rejectbounty()
-        #纠正提前退出问题
+        # 纠正提前退出问题
         maxVal, maxLoc
         # 御魂提前推出调整  单人则是挑战 组队则是协战队伍
         if self.section == 0:
