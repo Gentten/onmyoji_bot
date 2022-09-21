@@ -84,7 +84,11 @@ class Fighter(GameScene):
         while time.time() - start_time <= self.max_win_time and self.run:
             # 拒绝悬赏
             self.yys.rejectbounty()
-
+            # 提前自动开启的奖励覆盖在战斗前
+            maxVal, maxLoc = self.yys.find_img('img/HUO-DE-JIANG-LI.png')
+            if(maxVal>0.9):
+                self.log.info('本轮战斗结束,提前奖励覆盖在战斗胜利界面')
+                return 2
             maxVal, maxLoc = self.yys.find_multi_img(
                 'img/SHENG-LI.png', 'img/TIAO-DAN.png', 'img/JIN-BI.png', 'img/JIE-SU.png',
                 'img/DA-KAI-JANG-LI.png', 'img/S-H.png')
@@ -123,14 +127,15 @@ class Fighter(GameScene):
         结算处理
             :param section: 战斗选项场景
             :param mood: 状态函数
-            :param state: 上一步的状态。0-战斗成功页面; 1-领取奖励页面
+            :param state: 上一步的状态。0-战斗成功页面; 1-领取奖励页面 2 战斗成功被覆盖在奖励页面
         '''
         # 初始化结算点
         mypos = ut.secondposition()
-        if state == 0:
+        if state in [0, 2]:
             self.yys.mouse_click_bg(mypos)
             self.log.info('点击结算')
-            mood.moodsleep()
+            if state == 0:
+                mood.moodsleep()
         start_time = time.time()
         while time.time() - start_time <= self.max_op_time and self.run:
             # 拒绝悬赏
