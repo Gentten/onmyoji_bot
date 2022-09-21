@@ -406,6 +406,7 @@ class GameControl():
         start_time = time.time()
         while time.time() - start_time <= max_time and self.run:
             maxVal, maxLoc = self.find_img(img_path)
+            logging.info("检测是否含有自动标记，检测值:"+str(maxVal))
             if maxVal > 0.9:
                 return maxLoc
             self.rejectbounty()

@@ -45,7 +45,7 @@ class YuhunPos():
     yuhun_btn = (147, 152), (327, 408)    # 御魂选项
     yeyuanhuo_btn = (476, 125), (708, 427)    # 业原火选项
     beimihu_btn = (838, 141), (1048, 407)    # 卑弥呼
-
+    ac_tiaozhan_btn= (1032, 532), (1080, 572) # 活动挑战按钮
     @staticmethod
     def InitPosWithClient__():
         for item in vars(YuhunPos).items():
