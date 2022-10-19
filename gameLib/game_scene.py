@@ -25,7 +25,8 @@ class GameScene():
 
         # 分别识别庭院、探索、章节页、探索内
         maxVal, maxLoc = self.yys.find_multi_img(
-            'img/JIA-CHENG.png', 'img/JUE-XING.png', 'img/TAN-SUO.png', 'img/YING-BING.png', 'img/BA-QI-DA-SHE.png', 'img/TIAO-ZHAN.png')
+            'img/JIA-CHENG.png', 'img/JUE-XING-CAI-LIAO.png', 'img/TAN-SUO.png', 'img/YING-BING.png', 'img/BA-QI-DA-SHE.png',
+            'img/TIAO-ZHAN.png')
 
         scene_cof = max(maxVal)
         if scene_cof > 0.9:
@@ -42,12 +43,17 @@ class GameScene():
         '''
         scene_now = self.get_scene()
         self.log.info('目前场景：' + str(scene_now))
-
-        if scene_now == 0:
+        times = 3
+        while scene_now == 0:
+            if times <= 0:
+                self.log.info('无法未识别场景 切换失败，退出脚本保留现场')
+                self.yys.quit_game()
+                return False
             self.log.info('暂未识别场景，2s后重试一次')
             time.sleep(2)
+            times = times - 1
             scene_now = self.get_scene()
-            self.log.info('目前场景：' + str(scene_now))
+            self.log.info('重新识别后：目前场景：' + str(scene_now))
 
         if scene_now == scene:
             return True
@@ -61,7 +67,7 @@ class GameScene():
 
                 # 点击探索灯笼进入探索界面
                 self.click_until('探索灯笼', 'img/JUE-XING.png', *
-                                 TansuoPos.tansuo_denglong, 2)
+                TansuoPos.tansuo_denglong, 2)
 
                 # 递归
                 self.switch_to_scene(scene)
@@ -99,7 +105,7 @@ class GameScene():
             if scene in [2, 3]:
                 # 点击退出探索
                 self.click_until_multi('退出按钮', 'img/QUE-REN.png', 'img/TAN-SUO.png', 'img/JUE-XING.png',
-                                 pos=TansuoPos.quit_btn[0], pos_end=TansuoPos.quit_btn[1], step_time=0.5)
+                                       pos=TansuoPos.quit_btn[0], pos_end=TansuoPos.quit_btn[1], step_time=0.5)
 
                 # 点击确认
                 self.click_until('确认按钮', 'img\\QUE-REN.png',
