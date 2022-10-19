@@ -18,6 +18,8 @@ class ExploreFight(Fighter):
         Fighter.__init__(self, hwnd=hwnd)
 
         # 读取配置文件
+        # 当前是否打的是boss
+        self.cur_fight_boss = False
         conf = configparser.ConfigParser()
         conf.read('conf.ini', encoding="utf-8")
 
@@ -51,11 +53,12 @@ class ExploreFight(Fighter):
     '''
           移动至下一个场景，每次移动400~500像素
     '''
+
     def next_scene(self):
 
-        #起点
+        # 起点
         x0 = random.randint(510, 1126)
-        #终点
+        # 终点
         x1 = x0 - random.randint(400, 500)
         y0 = random.randint(110, 210)
         y1 = random.randint(110, 210)
@@ -203,28 +206,91 @@ class ExploreFight(Fighter):
         return fight_pos
 
     def find_red_monster(self):
-            '''
-            寻找红达摩怪
-                return: 成功返回怪的攻打图标位置；失败返回-1
-            '''
-            # 查红达摩图标
-            red_pos = self.yys.find_img_knn(
-                    'img\\HONG-DA-MO.png', 1, (2, 205), (1127, 545))
-            if red_pos == (0, 0):
-                return -1
+        '''
+        寻找红达摩怪
+            return: 成功返回怪的攻打图标位置；失败返回-1
+        '''
+        # 查红达摩图标
+        red_pos = self.yys.find_img_knn(
+            'img\\HONG-DA-MO.png', 1, (2, 205), (1127, 545))
+        if red_pos == (0, 0):
+            return -1
+        else:
+            red_pos = (red_pos[0] + 2, red_pos[1] + 205)
+
+        # 查找怪攻打图标位置
+        find_pos = self.yys.find_game_img(
+            'img\\FIGHT.png', 1, (red_pos[0] - 150, red_pos[1] - 250), (red_pos[0] + 150, red_pos[1] - 50))
+        if not find_pos:
+            return -1
+
+        # 返回经打图标位置
+        fight_pos = ((find_pos[0] + red_pos[0] - 150),
+                     (find_pos[1] + red_pos[1] - 250))
+        return fight_pos
+
+    '''
+         找到指定怪的位置
+        :return: 找到的位置
+    '''
+
+    def find_fight_position(self):
+        # 寻找指定怪 ，未找到则寻找boss，再未找到则退出
+        if self.monster_type == 1:
+            fight_pos = self.find_exp_monster()
+        elif self.monster_type == 2:
+            fight_pos = self.find_red_monster()
+        else:
+            fight_pos = self.find_not_boss()
+        if fight_pos == -1:
+            if self.fight_boss_enable:
+                fight_pos = self.find_boss()
+                if fight_pos == -1:
+                    self.log.info('未找到指定怪和boss')
+                    return -2
+                # 表示这次打的是boss
+                self.cur_fight_boss = True
             else:
-                red_pos = (red_pos[0] + 2, red_pos[1] + 205)
-
-            # 查找怪攻打图标位置
-            find_pos = self.yys.find_game_img(
-                'img\\FIGHT.png', 1, (red_pos[0] - 150, red_pos[1] - 250), (red_pos[0] + 150, red_pos[1] - 50))
-            if not find_pos:
+                self.log.info('未找到指定怪')
                 return -1
+        return fight_pos
 
-            # 返回经打图标位置
-            fight_pos = ((find_pos[0] + red_pos[0] - 150),
-                         (find_pos[1] + red_pos[1] - 250))
-            return fight_pos
+    def click_monster_until(self, pos, pos_end=None, step_time=0.8, appear=True):
+        '''
+        一直点击怪直到进入 进入占到
+            :param tag: 按键名
+            :param pos: (x,y) 鼠标单击的坐标 初始点击位置 点击失败后重写探测位置 因为怪物可能移动
+            :param pos_end=None: (x,y) 若pos_end不为空，则鼠标单击以pos为左上角坐标pos_end为右下角坐标的区域内的随机位置
+            :step_time=0.5: 查询间隔
+            :appear: 图片出现或消失：Ture-出现；False-消失
+            :return: 成功返回True, 失败退出游戏
+        '''
+        # 在指定时间内反复监测画面并点击
+        start_time = time.time()
+        while time.time() - start_time <= self.max_op_time and self.run:
+            # 点击指定位置
+            self.yys.mouse_click_bg(pos, pos_end)
+            self.log.info('点击怪物')
+            ut.mysleep(step_time * 1000)
+            # 判断是否在探索界面里
+            result = self.yys.find_game_img('img/YING-BING.png')
+            if not appear:
+                result = not result
+            if result:
+                self.log.info('点击怪物成功')
+                return True
+                # 防止悬赏导致点击超时
+            self.yys.rejectbounty()
+            self.log.info('点击失败 重新失败位置')
+            # 可能需要纠正位置 怪物移动
+            pos = self.find_fight_position()
+            # 位置纠正找不到怪了
+            if pos in [-1, -2]:
+                # 怪物移动到当前场景外面了
+                return False
+
+        # 提醒玩家点击失败，并在5s后退出
+        self.click_failed('怪物')
 
     def fight_monster(self, mood1, mood2):
         '''
@@ -236,29 +302,17 @@ class ExploreFight(Fighter):
             # 查看是否进入探索界面
             self.yys.wait_game_img('img\\YING-BING.png')
             self.log.info('进入探索页面')
-
+            # 重置当前是否打的boss
+            self.cur_fight_boss = False
             # 寻找指定怪 ，未找到则寻找boss，再未找到则退出
-            if self.monster_type == 1:
-                fight_pos = self.find_exp_monster()
-            elif self.monster_type ==2:
-                fight_pos = self.find_red_monster()
-            else:
-                fight_pos = self.find_not_boss()
-            boss = False
-            if fight_pos == -1:
-                if self.fight_boss_enable:
-                    fight_pos = self.find_boss()
-                    boss = True
-                    if fight_pos == -1:
-                        self.log.info('未找到指定怪和boss')
-                        return -2
-                else:
-                    self.log.info('未找到指定怪')
-                    return -1
+            fight_pos = self.find_fight_position()
+            if fight_pos in [-1, -2]:
+                return fight_pos
+            # 如果点击怪物失败
+            if not self.click_monster_until(fight_pos, step_time=0.3, appear=False):
+                return -1
 
-            # 攻击怪
-            self.click_until('怪', 'img/YING-BING.png', fight_pos, step_time=0.3, appear=False)
-            self.log.info('已进入战斗')
+            self.log.info('探索已进入战斗')
 
             # 自动轮换就不需要自己做操作了
             if not self.automatic_rotation:
@@ -282,7 +336,7 @@ class ExploreFight(Fighter):
             self.get_reward(mood2, state)
 
             # 返回结果
-            if boss:
+            if self.cur_fight_boss:
                 return 2
             else:
                 return 1

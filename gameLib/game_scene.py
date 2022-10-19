@@ -25,7 +25,7 @@ class GameScene():
 
         # 分别识别庭院、探索、章节页、探索内
         maxVal, maxLoc = self.yys.find_multi_img(
-            'img/JIA-CHENG.png', 'img/YU-LING.png', 'img/TAN-SUO.png', 'img/YING-BING.png', 'img/BA-QI-DA-SHE.png',
+            'img/JIA-CHENG.png', 'img/JUE-XING-CAI-LIAO.png', 'img/TAN-SUO.png', 'img/YING-BING.png', 'img/BA-QI-DA-SHE.png',
             'img/TIAO-ZHAN.png')
 
         scene_cof = max(maxVal)
