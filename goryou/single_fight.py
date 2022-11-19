@@ -8,9 +8,9 @@ import logging
 class GoryouFight(Fighter):
     '''单人御魂战斗，参数done, emyc'''
 
-    def __init__(self, done=1, emyc=0):
+    def __init__(self, conf, done=1, emyc=0):
         # 初始化
-        Fighter.__init__(self)
+        Fighter.__init__(self, conf)
 
     def start(self):
         '''单人战斗主循环'''

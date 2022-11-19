@@ -9,19 +9,19 @@ import time
 
 
 class ExploreFight(Fighter):
-    def __init__(self, hwnd=0, mode=0):
+    def __init__(self, conf, hwnd=0, mode=0):
         '''
         初始化
             :param hwnd=0: 指定窗口句柄：0-否；其他-窗口句柄
             :param mode=0: 狗粮模式：0-正常模式，1-组队后排狗粮
         '''
-        Fighter.__init__(self, hwnd=hwnd)
+        Fighter.__init__(self, conf, hwnd=hwnd)
 
         # 读取配置文件
         # 当前是否打的是boss
         self.cur_fight_boss = False
-        conf = configparser.ConfigParser()
-        conf.read('conf.ini', encoding="utf-8")
+        # conf = configparser.ConfigParser()
+        # conf.read('conf.ini', encoding="utf-8")
 
         # 读取狗粮配置
         if mode == 0:

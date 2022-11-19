@@ -45,6 +45,40 @@
 更新日志请点击[这里](https://github.com/AcademicDog/onmyoji_bot/blob/master/CHANGELOG.md)
 
 # 协议 (License)
+# mumu模拟器的双开支持问题
+
+各种其他国产模拟器有的功能它都没有，例如单开的时候可以使用7555端口连接adb，多开就没办法逐个窗口连接了。然后MuMu也不支持桥接网卡。
+因为MuMu也是基于vbox魔改来的，vbox原来支持的它也大部分支持，于是我查看了vbox的文档，自己加端口映射的命令。
+命令是这样子的
+```
+C:\Program Files\NemuVbox\Hypervisor\NemuManage.exe" modifyvm "虚拟机对应的名字" --natpf1 "myadb,tcp,,自定义的端口号,,5555
+```
+主要修改几个引号里面的内容，
+
+第一个NemuManage的路径基本都固定，一般都不需要改。
+
+第二个引号是虚拟机对应的名字，在
+MuMu安装目录\emulator\nemu\vms\
+
+里面查看，每个窗口对应一个文件夹，就是文件夹的名字。
+
+（ps：如果你了解sqlite数据库，也可以使用数据库查看工具打开“C:\Users\Public\Documents\MuMu Files\NemuMultiPlayer\config\cache.db”这个数据库，里面就能比较清楚了看到对应的关系。）
+
+第三个就是自定义的端口号了，自己随便取，不要跟已经有的冲突就可以。每个窗口一个。注意mumu模拟器双开时选择多开引擎
+示例：
+```
+"C:\Program Files\NemuVbox\Hypervisor\NemuManage.exe" modifyvm "nemu-6.0-x64-default_1" --natpf1 "myadb,tcp,,8555,,5555"
+
+```
+在虚拟机关闭的情况下用cmd执行就可以了。
+
+执行完，开启这个虚拟机，就可以用adb通过自定义的端口连接到了。
+
+MuMu初始的那个窗口不需要改，还是7555，自己新建的，以上面我的示例从8555开始，逐个+1
+
+这样就可以实现了多个窗口同时用adb控制的功能。
+
+
 
 该源代码使用了 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) 开源协议。
 

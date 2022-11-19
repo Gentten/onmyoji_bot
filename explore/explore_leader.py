@@ -12,14 +12,14 @@ class ExploreLeader(ExploreFight):
     组队探索队长
     '''
 
-    def __init__(self, hwnd=0, delay=False):
+    def __init__(self, conf, hwnd=0, delay=False):
         '''
         初始化
             :param hwnd=0: 指定窗口句柄：0-否；其他-窗口句柄
             :param mode=0: 狗粮模式：0-正常模式，1-组队后排狗粮
             :param delay=False: 完成一轮探索后，是否等待1s再邀请下一轮
         '''
-        ExploreFight.__init__(self, hwnd=hwnd, mode=1)
+        ExploreFight.__init__(self, conf, hwnd=hwnd, mode=1)
         self.delay = delay
         self.log = MyLog.dlogger
 

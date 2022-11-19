@@ -1,3 +1,5 @@
+import configparser
+
 from gameLib.game_ctl import GameControl
 from explore.explore_leader import ExploreLeader
 from explore.explore_passenger import ExplorePassenger
@@ -23,7 +25,7 @@ def get_game_hwnd():
 
 
 class ExploreDual():
-    def __init__(self):
+    def __init__(self, conf):
         # 初始化窗口信息
         get_game_hwnd()
         self.hwndlist = hwndlist
@@ -33,17 +35,19 @@ class ExploreDual():
         if num == 2:
             logging.info('检测到两个窗口，窗口信息正常')
         else:
-            logging.warning('检测到'+str(num)+'个窗口，窗口信息异常！')
+            logging.warning('检测到' + str(num) + '个窗口，窗口信息异常！')
 
+        # conf = configparser.ConfigParser()
+        # conf.read('conf.ini', encoding="utf-8")
         # 初始化司机和打手
         for hwnd in hwndlist:
-            yys = GameControl(hwnd)
+            yys = GameControl(hwnd, conf)
             if yys.find_game_img('img/DUI.png', 1, (68, 242), (135, 306), thread=0.8):
-                self.driver = ExploreLeader(hwnd=hwnd, delay=True)
+                self.driver = ExploreLeader(conf, hwnd=hwnd, delay=True)
                 hwndlist.remove(hwnd)
                 logging.info('发现队长')
                 break
-        self.passenger = ExplorePassenger(hwnd=hwndlist[0])
+        self.passenger = ExplorePassenger(conf, hwnd=hwndlist[0])
         logging.info('发现乘客')
 
     def start(self):

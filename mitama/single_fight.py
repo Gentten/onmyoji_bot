@@ -8,13 +8,13 @@ import configparser
 class SingleFight(Fighter):
     '''单人御魂战斗，参数done, emyc'''
 
-    def __init__(self, done=1, emyc=0):
+    def __init__(self, conf, done=1, emyc=0):
         # 初始化
-        Fighter.__init__(self, emyc)
+        Fighter.__init__(self, conf, emyc)
 
         # 读取配置文件
-        conf = configparser.ConfigParser()
-        conf.read('conf.ini', encoding="utf-8")
+        # conf = configparser.ConfigParser()
+        # conf.read('conf.ini', encoding="utf-8")
         self.run_submode = conf.getint('mitama', 'run_submode')
 
     def start(self):
@@ -29,7 +29,6 @@ class SingleFight(Fighter):
         elif self.run_submode == 2:
             self.switch_to_scene(8)
         while self.run:
-
             # 在御魂主选单，点击“挑战”按钮, 需要使用“阵容锁定”！
             self.yys.wait_game_img_knn(
                 'img\\TIAO-ZHAN.png', max_time=self.max_win_time, thread=20)

@@ -14,19 +14,27 @@ import win32gui
 
 class Fighter(GameScene):
 
-    def __init__(self, emyc=0, hwnd=0):
+    def __init__(self, conf=None, emyc=0, hwnd=0, type='driver'):
         '''
         初始化
+            : param conf ：全局配置文件
             : param emyc=0: 点怪设置：0-不点怪
             : param hwnd=0: 指定窗口句柄：0-否；其他-窗口句柄
+            : param type=driver ：战斗相关 根据这个参数来读取相关的参数 例如driver则读取driver的端口
+            : ps:为了最小改动而破坏继承
+
         '''
         # 初始参数
+        super().__init__()
+        if conf is None:
+            conf = configparser.ConfigParser()
+            conf.read('conf.ini', encoding="utf-8")
         self.emyc = emyc
         self.run = True
 
         # 读取配置文件
-        conf = configparser.ConfigParser()
-        conf.read('conf.ini', encoding="utf-8")
+        # conf = configparser.ConfigParser()
+        # conf.read('conf.ini', encoding="utf-8")
         self.client = conf.getint('DEFAULT', 'client')
         quit_game_enable = conf.getboolean('watchdog', 'watchdog_enable')
         self.max_op_time = conf.getint('watchdog', 'max_op_time')
@@ -50,7 +58,13 @@ class Fighter(GameScene):
                 hwnd = win32gui.FindWindow(0, u'阴阳师 - MuMu模拟器')
                 # TansuoPos.InitPosWithClient__()
                 # YuhunPos.InitPosWithClient__()
-        self.yys = GameControl(hwnd, quit_game_enable)
+        # adb 端口相关
+        port = 7555
+        if type is 'driver':
+            port = conf.getint('DEFAULT', 'driver_adb_port')
+        if type is 'passenger':
+            port = conf.getint('DEFAULT', 'passenger_adb_port')
+        self.yys = GameControl(hwnd, conf, quit_game_enable, port)
         self.log.info('绑定窗口成功')
         self.log.info(str(hwnd))
 
@@ -148,7 +162,7 @@ class Fighter(GameScene):
                         mypos = newpos
                         break
                 # 检查上次点击是否已经结算成功了
-                maxVal,maxLoc = self.yys.find_img('img/HUO-DE-JIANG-LI.png')
+                maxVal, maxLoc = self.yys.find_img('img/HUO-DE-JIANG-LI.png')
                 if maxVal < 0.9:
                     # 不在奖励在结束页面的成功
                     break

@@ -9,14 +9,14 @@ import time
 class FighterPassenger(Fighter):
     '''御魂战斗乘客程序，参数mode, emyc'''
 
-    def __init__(self, emyc=0, hwnd=0, mark=True):
+    def __init__(self, conf, emyc=0, hwnd=0, mark=True):
         '''
         初始化
             :param emyc=0: 点怪设置：0-不点怪
             :param hwnd=0: 指定窗口句柄：0-否；其他-窗口句柄
             :param mark=True: 是否全局启用标记功能
         '''
-        Fighter.__init__(self, emyc, hwnd)
+        Fighter.__init__(self, conf, emyc, hwnd, 'passenger')
         self.log = MyLog.plogger
         self.mark = mark
 
@@ -50,7 +50,7 @@ class FighterPassenger(Fighter):
             start_time = time.time()
             while time.time() - start_time <= 5 and self.run:
                 # 检测是否回到队伍中
-                if(self.yys.wait_game_img('img\\XIE-ZHAN-DUI-WU.png', 1, False)):
+                if (self.yys.wait_game_img('img\\XIE-ZHAN-DUI-WU.png', 1, False)):
                     self.log.info('Passenger: 进入队伍')
                     break
 
@@ -67,6 +67,6 @@ class FighterPassenger(Fighter):
                     elif self.yys.find_game_img('img\\JIE-SHOU.png'):
                         self.yys.mouse_click_bg((125, yuhun_loc[1]))
                         self.log.info('Passenger: 接受邀请')
-            
+
             # 检查游戏次数
             self.check_times()

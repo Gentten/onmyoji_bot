@@ -11,11 +11,11 @@ class ExplorePassenger(ExploreFight):
     组队探索队员
     '''
 
-    def __init__(self, hwnd=0):
+    def __init__(self, conf=None, hwnd=0):
         '''
         初始化
         '''
-        ExploreFight.__init__(self, hwnd=hwnd)
+        ExploreFight.__init__(self, conf, hwnd=hwnd)
         self.log = MyLog.plogger
         self.start_time = time.time()
 
@@ -50,7 +50,7 @@ class ExplorePassenger(ExploreFight):
                 if js_loc:
                     # 点击接受邀请
                     if self.yys.find_game_img('img/JIE-SHOU.png'):
-                        self.click_until('接受邀请', 'img/JIE-SHOU.png', (127, js_loc[1]+34), appear=False)
+                        self.click_until('接受邀请', 'img/JIE-SHOU.png', (127, js_loc[1] + 34), appear=False)
                         self.log.info('接受邀请')
 
                 # 检查游戏次数

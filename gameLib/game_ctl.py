@@ -17,7 +17,7 @@ from PIL import Image
 
 
 class GameControl():
-    def __init__(self, hwnd, quit_game_enable=1):
+    def __init__(self, hwnd, conf, quit_game_enable=1, port=7555):
         '''
         初始化
             :param hwnd: 需要绑定的窗口句柄
@@ -35,12 +35,14 @@ class GameControl():
         self._client_w = r2 - l2
         self._border_l = ((r1 - l1) - (r2 - l2)) // 2
         self._border_t = ((b1 - t1) - (b2 - t2)) - self._border_l
-        conf = configparser.ConfigParser()
-        conf.read('conf.ini', encoding="utf-8")
+        # conf = configparser.ConfigParser()
+        # conf.read('conf.ini', encoding="utf-8")
         self.magatama_reject = conf.getboolean('DEFAULT', 'magatama_reject')
         self.client = conf.getint('DEFAULT', 'client')
+        self.device = '127.0.0.1:' + str(port)
         if self.client == 1:
-            os.system('adb connect 127.0.0.1:7555')
+            # 需要改动
+            os.system('adb connect ' + self.device)
             os.system('adb devices')
 
     def init_mem(self):
@@ -368,7 +370,7 @@ class GameControl():
                                  0, win32api.MAKELONG(pos_rand[0], pos_rand[1]))
         else:
             command = str(pos_rand[0]) + ' ' + str(pos_rand[1])
-            os.system('adb shell input tap ' + command)
+            os.system('adb  -s ' + self.device + ' shell input tap ' + command)
 
     def mouse_drag_bg(self, pos1, pos2):
         """
@@ -392,7 +394,7 @@ class GameControl():
         else:
             command = str(pos1[0]) + ' ' + str(pos1[1]) + \
                       ' ' + str(pos2[0]) + ' ' + str(pos2[1])
-            os.system('adb shell input swipe ' + command)
+            os.system('adb -s ' + self.device + '  input swipe ' + command)
 
     def wait_game_img(self, img_path, max_time=100, quit=True):
         """
@@ -406,7 +408,7 @@ class GameControl():
         start_time = time.time()
         while time.time() - start_time <= max_time and self.run:
             maxVal, maxLoc = self.find_img(img_path)
-            logging.info("检测是否含有自动标记，检测值:"+str(maxVal))
+            logging.info("检测是否含有自动标记，检测值:" + str(maxVal))
             if maxVal > 0.9:
                 return maxLoc
             self.rejectbounty()
@@ -496,7 +498,7 @@ class GameControl():
                     self.hwnd, win32con.WM_DESTROY, 0, 0)  # 退出游戏
             else:
                 os.system(
-                    'adb shell am force-stop com.netease.onmyoji.netease_simulator')
+                    'adb -s ' + self.device + '  am force-stop com.netease.onmyoji.netease_simulator')
         logging.info('退出，最后显示已保存至/img/screenshots文件夹')
         sys.exit(0)
 
@@ -559,7 +561,7 @@ class GameControl():
             :param pos1=None: 欲查找范围的左上角坐标
             :param pos2=None: 欲查找范围的右下角坐标
             :param gray=0: 是否查找黑白图片，0：查找彩色图片，1：查找黑白图片
-            :param thread=0: 
+            :param thread=0:
             :return: 查找成功返回位置坐标，否则返回False
         '''
         self.rejectbounty()
@@ -614,7 +616,9 @@ def show_img(img):
 
 def main():
     hwnd = win32gui.FindWindow(0, u'阴阳师-网易游戏')
-    yys = GameControl(hwnd, 0)
+    conf = configparser.ConfigParser()
+    conf.read('conf.ini', encoding="utf-8")
+    yys = GameControl(hwnd, conf, 0)
     yys.debug()
 
 

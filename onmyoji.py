@@ -44,45 +44,45 @@ def init():
         mode = conf.getint('DEFAULT', 'run_mode')
         if mode == 0:
             # 单刷
-            fight = SingleFight()
+            fight = SingleFight(conf)
 
         elif mode == 1:
             # 司机
-            fight = DriverFighter()
+            fight = DriverFighter(conf)
 
         elif mode == 2:
             # 乘客
-            fight = FighterPassenger()
+            fight = FighterPassenger(conf)
 
         elif mode == 3:
             # 双开
-            fight = DualFighter()
+            fight = DualFighter(conf)
 
     elif section == 1:
         # 御灵
-        fight = GoryouFight()
+        fight = GoryouFight(conf)
 
     elif section == 2:
         # 探索
         mode = conf.getint('explore', 'explore_mode')
         if mode == 0:
             # 单刷
-            fight = ExploreFight()
+            fight = ExploreFight(conf)
         elif mode == 1:
             # 单人队长
-            fight = ExploreLeader()
+            fight = ExploreLeader(conf)
         elif mode == 2:
             # 单人队员
-            fight = ExplorePassenger()
+            fight = ExplorePassenger(conf)
         elif mode == 3:
             # 双开
-            fight = ExploreDual()
+            fight = ExploreDual(conf)
     elif section == 3:
         # 业原火
-        fight = YeYuanHuoFight()
+        fight = YeYuanHuoFight(conf)
     elif section == 4:
         # 活动
-        fight = ActivitiesFight()
+        fight = ActivitiesFight(conf)
     fight.start()
 
 
