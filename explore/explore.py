@@ -9,13 +9,14 @@ import time
 
 
 class ExploreFight(Fighter):
-    def __init__(self, conf, hwnd=0, mode=0):
+    def __init__(self, conf, hwnd=0, mode=0, type='single'):
         '''
         初始化
             :param hwnd=0: 指定窗口句柄：0-否；其他-窗口句柄
             :param mode=0: 狗粮模式：0-正常模式，1-组队后排狗粮
+            :param type=passenger,driver,single: 类型
         '''
-        Fighter.__init__(self, conf, hwnd=hwnd)
+        Fighter.__init__(self, conf, hwnd=hwnd, type=type)
 
         # 读取配置文件
         # 当前是否打的是boss

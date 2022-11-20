@@ -119,7 +119,6 @@ if __name__ == "__main__":
             # 错误消息进日志
             sys.excepthook = my_excepthook
             logging.info('UAC pass')
-
             # 设置战斗参数
             init()
 

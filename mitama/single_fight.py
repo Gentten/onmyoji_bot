@@ -10,7 +10,7 @@ class SingleFight(Fighter):
 
     def __init__(self, conf, done=1, emyc=0):
         # 初始化
-        Fighter.__init__(self, conf, emyc)
+        Fighter.__init__(self, conf, emyc, 'single')
 
         # 读取配置文件
         # conf = configparser.ConfigParser()

@@ -10,7 +10,7 @@ class YeYuanHuoFight(Fighter):
 
     def __init__(self, conf, done=1, emyc=0):
         # 初始化
-        Fighter.__init__(self, conf)
+        Fighter.__init__(self, conf, type='single')
 
     def start(self):
         '''单人战斗主循环'''

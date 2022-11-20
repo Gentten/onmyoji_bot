@@ -58,8 +58,10 @@ class Fighter(GameScene):
                 hwnd = win32gui.FindWindow(0, u'阴阳师 - MuMu模拟器')
                 # TansuoPos.InitPosWithClient__()
                 # YuhunPos.InitPosWithClient__()
-        # adb 端口相关
+        # adb 端口相关 除双开指定之外都是使用默认的7555
         port = 7555
+        if type is 'single':
+            port = conf.getint('DEFAULT', 'single_adb_port')
         if type is 'driver':
             port = conf.getint('DEFAULT', 'driver_adb_port')
         if type is 'passenger':

@@ -15,7 +15,7 @@ class ExplorePassenger(ExploreFight):
         '''
         初始化
         '''
-        ExploreFight.__init__(self, conf, hwnd=hwnd)
+        ExploreFight.__init__(self, conf, hwnd=hwnd, type='passenger')
         self.log = MyLog.plogger
         self.start_time = time.time()
 
