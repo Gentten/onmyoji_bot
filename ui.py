@@ -121,7 +121,7 @@ if __name__ == "__main__":
         # 检测管理员权限
         if is_admin():
             # 初始化日志
-            MyLog.init()
+            MyLog.init('ui.log')
 
             # 错误消息进日志
             sys.excepthook = my_excepthook
@@ -145,6 +145,7 @@ if __name__ == "__main__":
             root = tk.Tk()
             app = MyBattle(root)
             app.mainloop()
+
 
         else:
             ctypes.windll.shell32.ShellExecuteW(

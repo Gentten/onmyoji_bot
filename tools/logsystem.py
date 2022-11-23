@@ -1,4 +1,5 @@
 import logging
+import time
 
 
 class MyLog():
@@ -7,15 +8,17 @@ class MyLog():
     mlogger = logging.getLogger()
 
     @staticmethod
-    def init():
+    def init(path='onmyoji.log'):
+        prefix = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+        log_name = '%s-' % prefix + path
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(filename)-17s [line:%(lineno)-3s] %(levelname)-7s %(name)-9s %(message)s',
                             datefmt='%Y %b %d %H:%M:%S',
-                            filename='log.log',
+                            filename=log_name,
                             filemode='w')
 
         #################################################################################################
-        #定义一个StreamHandler，将INFO级别或更高的日志信息打印到标准错误，并将其添加到当前的日志处理对象#
+        # 定义一个StreamHandler，将INFO级别或更高的日志信息打印到标准错误，并将其添加到当前的日志处理对象#
         console = logging.StreamHandler()
         console.setLevel(logging.INFO)
         formatter = logging.Formatter(

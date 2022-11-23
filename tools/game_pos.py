@@ -13,7 +13,7 @@ class TansuoPos():
     last_chapter = (934, 493), (1108, 572)  # 列表最后一章
     quit_last_chapter = (913, 114), (948, 148)  # 退出最后一章
     tansuo_btn = (787, 458), (890, 500)  # 探索按钮
-    tansuo_denglong = (424, 118), (462, 158)  # 探索灯笼
+    tansuo_denglong = (320, 150), (330, 160)  # 探索灯笼
     ready_btn = (1000, 460), (1069, 513)  # 准备按钮
     quit_btn = (32, 45), (58, 64)  # 退出副本
     confirm_btn = (636, 350), (739, 370)  # 退出确认按钮

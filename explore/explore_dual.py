@@ -59,7 +59,7 @@ class ExploreDual():
 
     def fiter_hwnd(self, fiter_hwd_ids):
         need_hwnd = []
-
+        logging.warning("过滤窗口句柄：" + fiter_hwd_ids)
         for hwnd in self.hwndlist:
             if str(hwnd) not in fiter_hwd_ids and win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(
                     hwnd) and win32gui.IsWindowVisible(hwnd):

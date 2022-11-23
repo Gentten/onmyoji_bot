@@ -25,7 +25,8 @@ class GameScene():
 
         # 分别识别庭院、探索、章节页、探索内
         maxVal, maxLoc = self.yys.find_multi_img(
-            'img/JIA-CHENG.png', 'img/JUE-XING-CAI-LIAO.png', 'img/TAN-SUO.png', 'img/YING-BING.png', 'img/BA-QI-DA-SHE.png',
+            'img/yrz.jpg', 'img/JUE-XING-CAI-LIAO.png', 'img/TAN-SUO.png', 'img/YING-BING.png',
+            'img/BA-QI-DA-SHE.png',
             'img/TIAO-ZHAN.png')
 
         scene_cof = max(maxVal)
@@ -59,6 +60,7 @@ class GameScene():
             return True
         if scene_now == 1:
             # 庭院中
+            self.log.info('在庭院中')
             if scene in [2, 3, 4, 5, 6, 7, 8]:
                 # 先将界面划到最右边
                 self.slide_x_scene(800)
@@ -66,7 +68,7 @@ class GameScene():
                 self.slide_x_scene(800)
 
                 # 点击探索灯笼进入探索界面
-                self.click_until('探索灯笼', 'img/JUE-XING.png', *
+                self.click_until('探索灯笼', 'img/JUE-XING-CAI-LIAO.png', *
                 TansuoPos.tansuo_denglong, 2)
 
                 # 递归
@@ -103,8 +105,10 @@ class GameScene():
         elif scene_now == 4:
             # 探索内
             if scene in [2, 3]:
+                # todo 有问题 会一直退出 加一个判断
                 # 点击退出探索
                 self.click_until_multi('退出按钮', 'img/QUE-REN.png', 'img/TAN-SUO.png', 'img/JUE-XING.png',
+                                       'img/yrz.jpg',
                                        pos=TansuoPos.quit_btn[0], pos_end=TansuoPos.quit_btn[1], step_time=0.5)
 
                 # 点击确认

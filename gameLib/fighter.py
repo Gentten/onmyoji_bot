@@ -102,6 +102,7 @@ class Fighter(GameScene):
 
         # 进行过滤
         fiter_hwd_ids = conf.get('DEFAULT', 'fiter_hwd_ids')
+        logging.warning("过滤窗口句柄：" + fiter_hwd_ids)
         for hwnd in match_hwnd:
             if str(hwnd) in fiter_hwd_ids:
                 match_hwnd.remove(hwnd)
