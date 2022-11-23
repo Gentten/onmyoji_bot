@@ -15,6 +15,24 @@ import win32gui
 import win32ui
 from PIL import Image
 
+'''
+      获取所有阴阳师窗口
+      :return 阴阳师窗口集合
+'''
+
+
+def get_game_hwnd():
+    yys_hwndlist = []
+
+    def add_fun(hwnd, m):
+        if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+            if '阴阳师' in win32gui.GetWindowText(hwnd):
+                yys_hwndlist.append(hwnd)
+
+    win32gui.EnumWindows(add_fun, 0)
+    return yys_hwndlist
+    pass
+
 
 class GameControl():
     def __init__(self, hwnd, conf, quit_game_enable=1, port=7555):
@@ -25,6 +43,7 @@ class GameControl():
         '''
         self.run = True
         self.hwnd = hwnd
+        self.conf = conf
         self.quit_game_enable = quit_game_enable
         self.debug_enable = False
         l1, t1, r1, b1 = win32gui.GetWindowRect(self.hwnd)
@@ -40,10 +59,8 @@ class GameControl():
         self.magatama_reject = conf.getboolean('DEFAULT', 'magatama_reject')
         self.client = conf.getint('DEFAULT', 'client')
         self.device = '127.0.0.1:' + str(port)
-        if self.client == 1:
-            # 需要改动
-            os.system('adb connect ' + self.device)
-            os.system('adb devices')
+        # adb 是否连接
+        self.adb_connect = False
 
     def init_mem(self):
         self.hwindc = win32gui.GetWindowDC(self.hwnd)
@@ -369,6 +386,10 @@ class GameControl():
             win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP,
                                  0, win32api.MAKELONG(pos_rand[0], pos_rand[1]))
         else:
+            if self.adb_connect is False:
+                os.system('adb connect ' + self.device)
+                os.system('adb devices')
+                self.adb_connect = True
             command = str(pos_rand[0]) + ' ' + str(pos_rand[1])
             os.system('adb  -s ' + self.device + ' shell input tap ' + command)
 
@@ -392,9 +413,15 @@ class GameControl():
             win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP,
                                  0, win32api.MAKELONG(pos2[0], pos2[1]))
         else:
+            if self.adb_connect is False:
+                os.system('adb connect ' + self.device)
+                os.system('adb devices')
+                self.adb_connect = True
+
             command = str(pos1[0]) + ' ' + str(pos1[1]) + \
                       ' ' + str(pos2[0]) + ' ' + str(pos2[1])
-            os.system('adb -s ' + self.device + '  input swipe ' + command)
+            os.system('adb -s ' + self.device + ' shell  input swipe ' + command)
+            logging.info('adb -s ' + self.device + '  shell  input swipe ' + command)
 
     def wait_game_img(self, img_path, max_time=100, quit=True):
         """
@@ -497,6 +524,10 @@ class GameControl():
                 win32gui.SendMessage(
                     self.hwnd, win32con.WM_DESTROY, 0, 0)  # 退出游戏
             else:
+                if self.adb_connect is False:
+                    os.system('adb connect ' + self.device)
+                    os.system('adb devices')
+                    self.adb_connect = True
                 os.system(
                     'adb -s ' + self.device + '  am force-stop com.netease.onmyoji.netease_simulator')
         logging.info('退出，最后显示已保存至/img/screenshots文件夹')
@@ -545,7 +576,6 @@ class GameControl():
             :param thread=0.9: 自定义阈值
             :return: 查找成功返回位置坐标，否则返回False
         '''
-        self.rejectbounty()
         maxVal, maxLoc = self.find_img(img_path, part, pos1, pos2, gray)
         # print(maxVal)
         if maxVal > thread:
@@ -564,7 +594,6 @@ class GameControl():
             :param thread=0:
             :return: 查找成功返回位置坐标，否则返回False
         '''
-        self.rejectbounty()
         maxLoc = self.find_img_knn(img_path, part, pos1, pos2, gray, thread)
         # print(maxVal)
         if maxLoc != (0, 0):

@@ -1,7 +1,8 @@
-from gameLib.game_ctl import GameControl
+import logging
+
+from gameLib.game_ctl import GameControl, get_game_hwnd
 from gameLib.game_scene import GameScene
 from tools.logsystem import MyLog
-from tools.game_pos import TansuoPos, YuhunPos
 import tools.utilities as ut
 
 import configparser
@@ -50,14 +51,9 @@ class Fighter(GameScene):
         # 启动日志
         self.log = MyLog.mlogger
 
-        # 绑定窗口
+        #  未指定窗口则需要自动去绑定窗口 或者安装配置文件里的来
         if hwnd == 0:
-            if self.client == 0:
-                hwnd = win32gui.FindWindow(0, u'阴阳师-网易游戏')
-            elif self.client == 1:
-                hwnd = win32gui.FindWindow(0, u'阴阳师 - MuMu模拟器')
-                # TansuoPos.InitPosWithClient__()
-                # YuhunPos.InitPosWithClient__()
+            hwnd = self.select_one_hwnd(conf, type)
         # adb 端口相关 除双开指定之外都是使用默认的7555
         port = 7555
         if type is 'single':
@@ -82,6 +78,44 @@ class Fighter(GameScene):
         if debug_enable:
             task = threading.Thread(target=self.yys.debug)
             task.start()
+
+    '''
+     选择一个需要控制的窗口，无法选择则退出
+      :return: 窗口
+    '''
+
+    def select_one_hwnd(self, conf, type):
+
+        # 匹配出未控制窗口
+        match_hwnd = []
+        select_mode = conf.getint('DEFAULT', 'select_mode')
+        # 选择模式
+        if select_mode == 0:
+            match_hwnd = get_game_hwnd()
+        else:
+            if type is 'single':
+                match_hwnd.append(conf.getint('DEFAULT', 'single_hwnd'))
+            if type is 'driver':
+                match_hwnd.append(conf.getint('DEFAULT', 'driver_hwnd'))
+            if type is 'passenger':
+                match_hwnd.append(conf.getint('DEFAULT', 'passenger_hwnd'))
+
+        # 进行过滤
+        fiter_hwd_ids = conf.get('DEFAULT', 'fiter_hwd_ids')
+        for hwnd in match_hwnd:
+            if str(hwnd) in fiter_hwd_ids:
+                match_hwnd.remove(hwnd)
+        # 匹配出未控制窗口数量大于1则 无法区分需要控制哪一个
+        num = len(match_hwnd)
+        if num != 1:
+            self.log.error('需要一个窗口,但无法确定是那个窗口或者无窗口：检测候选窗口数量：' + str(num))
+            exit(-1)
+        fiter_hwd_ids = fiter_hwd_ids + ','.join([str(i) for i in match_hwnd])
+        conf.set('DEFAULT', 'fiter_hwd_ids', fiter_hwd_ids)
+        # 保存配置文件
+        with open('conf.ini', 'w') as configfile:
+            conf.write(configfile)
+        return match_hwnd[0]
 
     def check_battle(self):
         # 检测是否进入战斗
@@ -129,13 +163,16 @@ class Fighter(GameScene):
         if (self.run_times == self.max_times):
             if (self.end_operation == 0):
                 self.log.warning('关闭脚本(次数已满)...')
+                self.yys.quit_game()
                 self.run = False
+                self.yys.quit_game()
                 os._exit(0)
             elif (self.end_operation == 1):
                 self.log.warning('关闭游戏(次数已满)...')
                 self.yys.quit_game()
                 self.log.warning('关闭脚本(次数已满)...')
                 self.run = False
+                self.yys.quit_game()
                 os._exit(0)
 
     def get_reward(self, mood, state):
