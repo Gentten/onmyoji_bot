@@ -6,11 +6,11 @@ import logging
 
 
 class GoryouFight(Fighter):
-    '''单人御魂战斗，参数done, emyc'''
+    '''单人御灵战斗，参数done, emyc'''
 
     def __init__(self, conf, done=1, emyc=0):
         # 初始化
-        Fighter.__init__(self, conf)
+        Fighter.__init__(self, conf, type='single')
 
     def start(self):
         '''单人战斗主循环'''
